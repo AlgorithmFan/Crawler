@@ -36,7 +36,7 @@ class Crawler:
 
 
 if __name__ == '__main__':
-    url = 'http://www.defensenews.com/story/defense/show-daily/space-symposium/2016/04/12/us-uae-share-space-situational-awareness-data/82936792/'
+    url = 'http://feeds.feedblitz.com/_/30/147775197/defensenews/mideast-africa'
     crawler = Crawler()
     html = crawler.getSourceCode(url)
 

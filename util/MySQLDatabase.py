@@ -70,11 +70,11 @@ class MySQLDatabase():
                 cursor = self.connection.cursor()
                 if len(value)==1:
                     cursor.execute(sql, value[0])
-                    return cursor.lastrowid
                 else:
                     cursor.executemany(sql, value)
                 self.connection.commit()
                 cursor.close()
+                return cursor.lastrowid
             except:
                 self.connection.rollback()
                 print "InsertTable Error %d: %s" % (e.args[0], e.args[1])

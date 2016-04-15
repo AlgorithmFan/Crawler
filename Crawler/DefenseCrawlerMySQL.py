@@ -3,7 +3,7 @@
 
 
 from Crawler import Crawler
-from util import CsvDatabase
+from util import MySQLDatabase
 from BeautifulSoup import BeautifulSoup
 
 class DefenseCrawler(Crawler):
@@ -11,8 +11,16 @@ class DefenseCrawler(Crawler):
         Crawler.__init__(self)
         self.viewed_url = set()   # store the href with hash value
         self.candidate_url = list()
-        self.database = CsvDatabase(filename)
-        self.database.buildColumn(['url', 'content'])
+        self.database = self.connectDb()
+
+    def connectDb(self):
+        ip = 'localhost'
+        user = 'root'
+        password = '123456'
+        database = 'baidu'
+        db = MySQLDatabase(ip, user, password, database)
+        db.OpenDb()
+        return db
 
     def iterative(self, url):
         urlhash = hash(url)
@@ -21,7 +29,10 @@ class DefenseCrawler(Crawler):
         self.viewed_url.add(urlhash)
 
         html = self.getSourceCode(url)
-        self.database.saveData([{'url':url, 'content': html[:100]}])
+        values = [(url, html)]
+
+        insertSQL = 'insert into defenceNews(url, content) values(%s, %s)'
+        self.database.InsertTb(insertSQL, values)
 
         hrefs = self.getHref(html)
         for href in hrefs:
@@ -58,7 +69,7 @@ class DefenseCrawler(Crawler):
             except:
                 # logger.write(self.candidate_url[0] + '\n')
                 del self.candidate_url[0]
-        self.database.close()
+        self.database.CloseDb()
 
 if __name__ == '__main__':
     url = 'http://www.defensenews.com/'
